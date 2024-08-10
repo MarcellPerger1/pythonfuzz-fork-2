@@ -74,7 +74,7 @@ class Fuzzer(object):
         rss = (psutil.Process(self._p.pid).memory_info().rss + psutil.Process(os.getpid()).memory_info().rss) / 1024 / 1024
 
         endTime = time.time()
-        execs_per_second = int(self._executions_in_sample / (endTime - self._last_sample_time))
+        execs_per_second = int(self._executions_in_sample / (endTime - self._last_sample_time or 1e-9))
         self._last_sample_time = time.time()
         self._executions_in_sample = 0
         logging.info('#{} {}     cov: {} corp: {} exec/s: {} rss: {} MB'.format(
