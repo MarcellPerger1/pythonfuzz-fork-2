@@ -11,5 +11,8 @@ def _fuzz(_buf):
 class TestFindCrash(unittest.TestCase):
     def test_find_crash(self):
         with patch('logging.Logger.info') as mock:
-            pythonfuzz.fuzzer.Fuzzer(_fuzz, runs=100).start()
+            try:
+                pythonfuzz.fuzzer.Fuzzer(_fuzz, runs=100).start()
+            except SystemExit as e:
+                self.assertEqual(0, e.code)
             mock.assert_called_with('did %d runs, stopping now.', 100)
