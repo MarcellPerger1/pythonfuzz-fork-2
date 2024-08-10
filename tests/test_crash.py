@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import pythonfuzz
 
+
 class TestFindCrash(unittest.TestCase):
     def test_find_crash(self):
         def fuzz(buf):
