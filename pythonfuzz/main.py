@@ -27,7 +27,3 @@ class PythonFuzz(object):
                           args.rss_limit_mb, args.timeout, args.regression, args.max_input_size,
                           args.close_fd_mask, args.runs, args.dict)
         f.start()
-
-
-if __name__ == '__main__':
-    PythonFuzz()
