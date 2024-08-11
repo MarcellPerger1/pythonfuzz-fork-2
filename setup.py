@@ -10,7 +10,6 @@ setuptools.setup(
     name="pythonfuzz",
     version="1.0.10",
     author="GitLab B.V.",
-    maintainer="Marcell Perger",
     description="Coverage-guided fuzz testing for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",

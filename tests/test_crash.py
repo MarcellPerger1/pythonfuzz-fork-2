@@ -19,4 +19,6 @@ class TestFindCrash(unittest.TestCase):
                 pythonfuzz.fuzzer.Fuzzer(_fuzz).start()
             except SystemExit as e:
                 self.assertEqual(76, e.code)
+            # TODO: this doesn't actually do anything as mock.called_once
+            #  doesn't exist so isn't really asserting anything
             self.assertTrue(mock.called_once)
