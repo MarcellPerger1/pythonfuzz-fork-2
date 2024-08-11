@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import sys
 import psutil
@@ -7,9 +6,12 @@ import hashlib
 import logging
 import functools
 import multiprocessing as mp
-mp.set_start_method('fork')
 
 from pythonfuzz import corpus, tracer
+
+
+if sys.platform != 'win32':
+    mp.set_start_method('fork')
 
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 logging.getLogger().setLevel(logging.DEBUG)
