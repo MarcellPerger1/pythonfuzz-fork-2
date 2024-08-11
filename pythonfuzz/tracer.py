@@ -1,11 +1,11 @@
 import collections
-import sys
 
 prev_line = 0
 prev_filename = ''
 data = collections.defaultdict(set)
 
-def trace(frame, event, arg):
+
+def trace(frame, event, _arg):
     if event != 'line':
         return trace
 
