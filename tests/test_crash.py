@@ -5,13 +5,18 @@ from unittest.mock import patch
 
 import pythonfuzz
 
+
+def _fuzz(buf):
+    f = io.BytesIO(buf)
+    z = zipfile.ZipFile(f)
+    z.testzip()
+
+
 class TestFindCrash(unittest.TestCase):
     def test_find_crash(self):
-        def fuzz(buf):
-            f = io.BytesIO(buf)
-            z = zipfile.ZipFile(f)
-            z.testzip()
-
         with patch('logging.Logger.info') as mock:
-            pythonfuzz.fuzzer.Fuzzer(fuzz).start()
+            try:
+                pythonfuzz.fuzzer.Fuzzer(_fuzz).start()
+            except SystemExit as e:
+                self.assertEqual(76, e.code)
             self.assertTrue(mock.called_once)

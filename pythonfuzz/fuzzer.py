@@ -1,26 +1,20 @@
 import os
-import sys
 import time
 import sys
 import psutil
 import hashlib
 import logging
-import functools
 import multiprocessing as mp
-mp.set_start_method('fork')
 
 from pythonfuzz import corpus, tracer
+
+if sys.platform != 'win32':
+    mp.set_start_method('fork')
 
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 logging.getLogger().setLevel(logging.DEBUG)
 
-SAMPLING_WINDOW = 5 # IN SECONDS
-
-try:
-    lru_cache = functools.lru_cache
-except:
-    import functools32
-    lru_cache = functools32.lru_cache
+SAMPLING_WINDOW = 5  # IN SECONDS
 
 
 def worker(target, child_conn, close_fd_mask):
@@ -71,7 +65,7 @@ class Fuzzer(object):
         self._corpus = corpus.Corpus(self._dirs, max_input_size, dict_path)
         self._total_executions = 0
         self._executions_in_sample = 0
-        self._last_sample_time = time.time()
+        self._last_sample_time = time.perf_counter()
         self._total_coverage = 0
         self._p = None
         self.runs = runs
@@ -79,9 +73,9 @@ class Fuzzer(object):
     def log_stats(self, log_type):
         rss = (psutil.Process(self._p.pid).memory_info().rss + psutil.Process(os.getpid()).memory_info().rss) / 1024 / 1024
 
-        endTime = time.time()
-        execs_per_second = int(self._executions_in_sample / (endTime - self._last_sample_time))
-        self._last_sample_time = time.time()
+        endTime = time.perf_counter()
+        execs_per_second = int(self._executions_in_sample / (endTime - self._last_sample_time or 1e-9))
+        self._last_sample_time = time.perf_counter()
         self._executions_in_sample = 0
         logging.info('#{} {}     cov: {} corp: {} exec/s: {} rss: {} MB'.format(
             self._total_executions, log_type, self._total_coverage, self._corpus.length, execs_per_second, rss))
@@ -143,7 +137,7 @@ class Fuzzer(object):
                 self._total_coverage = total_coverage
                 self._corpus.put(buf)
             else:
-                if (time.time() - self._last_sample_time) > SAMPLING_WINDOW:
+                if (time.perf_counter() - self._last_sample_time) > SAMPLING_WINDOW:
                     rss = self.log_stats('PULSE')
 
             if rss > self._rss_limit_mb:

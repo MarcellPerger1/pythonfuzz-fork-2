@@ -1,16 +1,9 @@
 import os
-import math
 import random
 import struct
 import hashlib
 
 from . import dictionnary
-
-try:
-    from random import _randbelow
-except ImportError:
-    from random import _inst
-    _randbelow = _inst._randbelow
 
 INTERESTING8 = [-128, -1, 0, 1, 16, 32, 64, 100, 127]
 INTERESTING16 = [0, 128, 255, 256, 512, 1000, 1024, 4096, 32767, 65535]
@@ -51,7 +44,7 @@ class Corpus(object):
     def _rand(n):
         if n < 2:
             return 0
-        return _randbelow(n)
+        return random.randrange(n)  # = choice(range(n)) = randbelow(n)
 
     # Exp2 generates n with probability 1/2^(n+1).
     @staticmethod
